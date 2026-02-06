@@ -75,4 +75,55 @@ public class QuantityMeasurementAppTest {
         Inches a = new Inches(1.0);
         assertTrue(a.equals(a));
     }
+ 
+    // === UC3: Same-unit equality ===
+    @Test
+    void testEquality_FeetToFeet_SameValue() {
+        assertEquals(new QuantityLength(1.0, LengthUnit.FEET),
+                new QuantityLength(1.0, LengthUnit.FEET));
+    }
+
+    @Test
+    void testEquality_InchToInch_SameValue() {
+        assertEquals(new QuantityLength(1.0, LengthUnit.INCH),
+                new QuantityLength(1.0, LengthUnit.INCH));
+    }
+
+    // === UC3: Cross-unit equality (feet <-> inch) ===
+    @Test
+    void testEquality_InchToFeet_EquivalentValue() {
+        assertEquals(new QuantityLength(12.0, LengthUnit.INCH),
+                new QuantityLength(1.0, LengthUnit.FEET));
+    }
+
+    @Test
+    void testEquality_FeetToInch_EquivalentValue() {
+        assertEquals(new QuantityLength(1.0, LengthUnit.FEET),
+                new QuantityLength(12.0, LengthUnit.INCH));
+    }
+
+    // === UC3: Non-equality ===
+    @Test
+    void testEquality_FeetToFeet_DifferentValue() {
+        assertNotEquals(new QuantityLength(1.0, LengthUnit.FEET),
+                new QuantityLength(2.0, LengthUnit.FEET));
+    }
+
+    @Test
+    void testEquality_InchToInch_DifferentValue() {
+        assertNotEquals(new QuantityLength(1.0, LengthUnit.INCH),
+                new QuantityLength(2.0, LengthUnit.INCH));
+    }
+
+    // === UC3: Null & same reference ===
+    @Test
+    void testEquality_NullComparison() {
+        assertNotEquals(new QuantityLength(1.0, LengthUnit.INCH), null);
+    }
+
+    @Test
+    void testEquality_SameReference() {
+        var q = new QuantityLength(1.0, LengthUnit.FEET);
+        assertEquals(q, q);
+    }
 }
