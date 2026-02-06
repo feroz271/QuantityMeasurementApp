@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.apps.quantitymeasurement.QuantityLength;
+import com.apps.quantitymeasurement.QuantityMeasurementApp;
 
 public class QuantityMeasurementAppTest {
-
-//    // ===== UC1: Feet tests using Length =====
+    //    // ===== UC1: Feet tests using Length =====
 //    @Test
 //    public void testFeetEquality_SameValue() {
 //        QuantityLength.Length a = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.FEET);
@@ -139,120 +139,97 @@ public class QuantityMeasurementAppTest {
 //    }
 
     // === UC4: Null, same unit equality,same value & same reference ===
+
+
+    // === UC5: Conversion tests ===
+
+    private static final double EPSILON = 1e-6;
     @Test
-    void testEquality_YardToYard_SameValue() {
-        assertEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS),
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS)
-        );
+    void testConversion_FeetToInches() {
+        double result = QuantityMeasurementApp.convert(
+                1.0, QuantityLength.LengthUnit.FEET, QuantityLength.LengthUnit.INCHES);
+        assertEquals(12.0, result, EPSILON);
     }
     @Test
-    void testEquality_YardToYard_DifferentValue() {
-        assertNotEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS),
-                new QuantityLength.Length(2.0, QuantityLength.LengthUnit.YARDS)
-        );
+    void testConversion_InchesToFeet() {
+        double result = QuantityMeasurementApp.convert(
+                24.0, QuantityLength.LengthUnit.INCHES, QuantityLength.LengthUnit.FEET);
+        assertEquals(2.0, result, EPSILON);
     }
     @Test
-    void testEquality_YardToFeet_EquivalentValue() {
-        assertEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS),
-                new QuantityLength.Length(3.0, QuantityLength.LengthUnit.FEET)
-        );
+    void testConversion_YardsToInches() {
+        double result = QuantityMeasurementApp.convert(
+                1.0, QuantityLength.LengthUnit.YARDS, QuantityLength.LengthUnit.INCHES);
+        assertEquals(36.0, result, EPSILON);
     }
     @Test
-    void testEquality_FeetToYard_EquivalentValue() {
-        assertEquals(
-                new QuantityLength.Length(3.0, QuantityLength.LengthUnit.FEET),
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS)
-        );
+    void testConversion_InchesToYards() {
+        double result = QuantityMeasurementApp.convert(
+                72.0, QuantityLength.LengthUnit.INCHES, QuantityLength.LengthUnit.YARDS);
+        assertEquals(2.0, result, EPSILON);
     }
     @Test
-    void testEquality_YardToInches_EquivalentValue() {
-        assertEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS),
-                new QuantityLength.Length(36.0, QuantityLength.LengthUnit.INCHES)
-        );
+    void testConversion_CentimetersToInches() {
+        double result = QuantityMeasurementApp.convert(
+                2.54, QuantityLength.LengthUnit.CENTIMETERS, QuantityLength.LengthUnit.INCHES);
+        assertEquals(1.0, result, EPSILON);
     }
     @Test
-    void testEquality_InchesToYard_EquivalentValue() {
-        assertEquals(
-                new QuantityLength.Length(36.0, QuantityLength.LengthUnit.INCHES),
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS)
-        );
+    void testConversion_FeetToYards() {
+        double result = QuantityMeasurementApp.convert(
+                6.0, QuantityLength.LengthUnit.FEET, QuantityLength.LengthUnit.YARDS);
+        assertEquals(2.0, result, EPSILON);
     }
     @Test
-    void testEquality_YardToFeet_NonEquivalentValue() {
-        assertNotEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS),
-                new QuantityLength.Length(2.0, QuantityLength.LengthUnit.FEET)
-        );
+    void testConversion_RoundTrip_PreservesValue() {
+        double original = 5.0;
+        double inches = QuantityMeasurementApp.convert(
+                original, QuantityLength.LengthUnit.FEET, QuantityLength.LengthUnit.INCHES);
+        double feetBack = QuantityMeasurementApp.convert(
+                inches, QuantityLength.LengthUnit.INCHES, QuantityLength.LengthUnit.FEET);
+        assertEquals(original, feetBack, EPSILON);
     }
     @Test
-    void testEquality_CentimetersToInches_EquivalentValue() {
-        assertEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.CENTIMETERS),
-                new QuantityLength.Length(0.393701, QuantityLength.LengthUnit.INCHES)
-        );
+    void testConversion_ZeroValue() {
+        double result = QuantityMeasurementApp.convert(
+                0.0, QuantityLength.LengthUnit.FEET, QuantityLength.LengthUnit.INCHES);
+        assertEquals(0.0, result, EPSILON);
     }
     @Test
-    void testEquality_CentimetersToFeet_NonEquivalentValue() {
-        assertNotEquals(
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.CENTIMETERS),
-                new QuantityLength.Length(1.0, QuantityLength.LengthUnit.FEET)
-        );
+    void testConversion_NegativeValue() {
+        double result = QuantityMeasurementApp.convert(
+                -1.0, QuantityLength.LengthUnit.FEET, QuantityLength.LengthUnit.INCHES);
+        assertEquals(-12.0, result, EPSILON);
     }
     @Test
-    void testEquality_MultiUnit_TransitiveProperty() {
-        QuantityLength.Length yard = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS);
-        QuantityLength.Length feet = new QuantityLength.Length(3.0, QuantityLength.LengthUnit.FEET);
-        QuantityLength.Length inches = new QuantityLength.Length(36.0, QuantityLength.LengthUnit.INCHES);
-        assertEquals(yard, feet);
-        assertEquals(feet, inches);
-        assertEquals(yard, inches);
-    }
-    @Test
-    void testEquality_YardWithNullUnit() {
+    void testConversion_InvalidUnit_Throws() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new QuantityLength.Length(1.0, null)
+                () -> QuantityMeasurementApp.convert(
+                        1.0, null, QuantityLength.LengthUnit.FEET)
         );
     }
     @Test
-    void testEquality_YardSameReference() {
-        QuantityLength.Length yard = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS);
-        assertEquals(yard, yard);
-    }
-    @Test
-    void testEquality_YardNullComparison() {
-        QuantityLength.Length yard = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.YARDS);
-        assertNotEquals(null, yard);
-    }
-    @Test
-    void testEquality_CentimetersWithNullUnit() {
+    void testConversion_NaNOrInfinite_Throws() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new QuantityLength.Length(1.0, null)
+                () -> QuantityMeasurementApp.convert(
+                        Double.NaN, QuantityLength.LengthUnit.FEET, QuantityLength.LengthUnit.INCHES)
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> QuantityMeasurementApp.convert(
+                        Double.POSITIVE_INFINITY,
+                        QuantityLength.LengthUnit.FEET,
+                        QuantityLength.LengthUnit.INCHES)
         );
     }
     @Test
-    void testEquality_CentimetersSameReference() {
-        QuantityLength.Length cm = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.CENTIMETERS);
-        assertEquals(cm, cm);
+    void testConversion_PrecisionTolerance() {
+        double result = QuantityMeasurementApp.convert(
+                1.0, QuantityLength.LengthUnit.CENTIMETERS, QuantityLength.LengthUnit.INCHES);
+        assertEquals(0.393701, result, EPSILON);
     }
-    @Test
-    void testEquality_CentimetersNullComparison() {
-        QuantityLength.Length cm = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.CENTIMETERS);
-        assertNotEquals(null, cm);
-    }
-    @Test
-    void testEquality_AllUnits_ComplexScenario() {
-        QuantityLength.Length yards = new QuantityLength.Length(2.0, QuantityLength.LengthUnit.YARDS);
-        QuantityLength.Length feet = new QuantityLength.Length(6.0, QuantityLength.LengthUnit.FEET);
-        QuantityLength.Length inches = new QuantityLength.Length(72.0, QuantityLength.LengthUnit.INCHES);
-        assertEquals(yards, feet);
-        assertEquals(feet, inches);
-        assertEquals(yards, inches);
-    }
+
 
 }

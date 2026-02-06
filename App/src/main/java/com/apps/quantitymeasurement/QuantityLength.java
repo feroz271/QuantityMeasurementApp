@@ -15,6 +15,9 @@ public class QuantityLength {
         public double toInches(double value) {
             return value * conversionFactor;
         }
+        public double fromInches(double inches) {
+            return inches / conversionFactor;
+        }
     }
 
     public static class Length {
@@ -29,6 +32,11 @@ public class QuantityLength {
         }
         private double toInches() {
             return unit.toInches(value);
+        }
+        public Length convertTo(LengthUnit targetUnit) {
+            double inches = toInches();
+            double newValue = targetUnit.fromInches(inches);
+            return new Length(newValue, targetUnit);
         }
         @Override
         public boolean equals(Object obj) {
