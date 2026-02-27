@@ -1,8 +1,7 @@
 package com.apps.quantitymeasurement;
 
 public class QuantityMeasurementApp {
-    /*
-    public static final class Feet {
+    /*public static final class Feet {
 public static final class Feet {
         private final double value;
         public Feet(double value) {
@@ -28,31 +27,43 @@ public static final class Feet {
             return value + " ft";
         }
     }*/
-    public static boolean demonstrateLengthEquality(QuantityLength.Length l1, QuantityLength.Length l2) {
+    public static boolean demonstrateLengthEquality(QuantityLength l1, QuantityLength l2) {
         return l1.equals(l2);
     }
-
-    public static QuantityLength.Length demonstrateLengthConversion(
-            QuantityLength.Length length,
-            QuantityLength.LengthUnit targetUnit) {
-        return length.convertTo(targetUnit);
-    }
-
-    public static double convert(double value, QuantityLength.LengthUnit from, QuantityLength.LengthUnit to) {
-        if (from == null || to == null) {
-            throw new IllegalArgumentException("Units cannot be null");
-        }
+    public static double convert(
+            double value,
+            LengthUnit sourceUnit,
+            LengthUnit targetUnit) {
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Value must be finite");
         }
-        double inches = from.toInches(value);
-        return to.fromInches(inches);
+        if (sourceUnit == null || targetUnit == null) {
+            throw new IllegalArgumentException("Units cannot be null");
+        }
+        double inches = sourceUnit.toInches(value);
+        return targetUnit.fromInches(inches);
     }
-
+    public static QuantityLength demonstrateLengthConversion(
+            QuantityLength length,
+            LengthUnit targetUnit) {
+        return length.convertTo(targetUnit);
+    }
     public static void main(String[] args) {
-        QuantityLength.Length feet = new QuantityLength.Length(1.0, QuantityLength.LengthUnit.FEET);
-        QuantityLength.Length inches = feet.convertTo(QuantityLength.LengthUnit.INCHES);
+           /* Feet a = new Feet(1.0);
+            Feet b = new Feet(1.0);
+            System.out.println(a.equals(b));*/
+            /*QuantityLength length1 = new QuantityLength(1.0, LengthUnit.FEET);
+            QuantityLength length2 = new QuantityLength(12.0, LengthUnit.INCHES);
+            System.out.println(length1.equals(length2));
+            QuantityLength length3 = new QuantityLength(1.0, LengthUnit.YARDS);
+            QuantityLength length4 = new QuantityLength(3.0, LengthUnit.FEET);
+            System.out.println(length3.equals(length4));
+            QuantityLength length5 = new QuantityLength(1.0, LengthUnit.CENTIMETERS);
+            QuantityLength length6 = new QuantityLength(0.393701, LengthUnit.INCHES);
+            System.out.println(length5.equals(length6));*/
+        QuantityLength feet = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength inches = feet.convertTo(LengthUnit.INCHES);
         System.out.println(inches);
-        System.out.println(convert(3.0, QuantityLength.LengthUnit.YARDS, QuantityLength.LengthUnit.FEET));
+        System.out.println(convert(3.0, LengthUnit.YARDS, LengthUnit.FEET));
     }
 }

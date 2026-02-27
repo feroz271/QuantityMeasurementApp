@@ -3,55 +3,49 @@ package com.apps.quantitymeasurement;
 import java.util.Objects;
 
 public class QuantityLength {
-    public enum LengthUnit {
-        FEET(12.0),
-        INCHES(1.0),
-        YARDS(36.0),
-        CENTIMETERS(0.393701);
-        private final double conversionFactor;
-        LengthUnit(double conversionFactor) {
-            this.conversionFactor = conversionFactor;
+    private final double value;
+    private final LengthUnit unit;
+
+    public QuantityLength(double value, LengthUnit unit) {
+        if (unit == null) {
+            throw new IllegalArgumentException("Unit cannot be null");
         }
-        public double toInches(double value) {
-            return value * conversionFactor;
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Value must be finite");
         }
-        public double fromInches(double inches) {
-            return inches / conversionFactor;
-        }
+        this.value = value;
+        this.unit = unit;
     }
 
-    public static class Length {
-        private final double value;
-        private final LengthUnit unit;
-        public Length(double value, LengthUnit unit) {
-            if (unit == null) {
-                throw new IllegalArgumentException("Unit cannot be null");
-            }
-            this.value = value;
-            this.unit = unit;
+    private double toInches() {
+        return unit.toInches(value);
+    }
+
+    public QuantityLength convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
         }
-        private double toInches() {
-            return unit.toInches(value);
-        }
-        public Length convertTo(LengthUnit targetUnit) {
-            double inches = toInches();
-            double newValue = targetUnit.fromInches(inches);
-            return new Length(newValue, targetUnit);
-        }
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Length other = (Length) obj;
-            return Double.compare(this.toInches(), other.toInches()) == 0;
-        }
-        @Override
-        public int hashCode() {
-            return Objects.hash(toInches());
-        }
-        @Override
-        public String toString() {
-            return value + " " + unit;
-        }
+        double inches = this.toInches();
+        double convertedValue = targetUnit.fromInches(inches);
+        convertedValue = Math.round(convertedValue * 100.0) / 100.0;
+        return new QuantityLength(convertedValue, targetUnit);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        QuantityLength other = (QuantityLength) obj;
+        return Double.compare(this.toInches(), other.toInches()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toInches());
+    }
+
+    @Override
+    public String toString() {
+        return value + " " + unit;
     }
 }
